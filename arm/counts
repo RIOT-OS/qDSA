@@ -1,0 +1,16 @@
+/* cycles */
+
+xkeypair: 2788691, 2788691, 2788691, 2788691
+xsign: 2908215, 2908215, 2908215, 2908215
+xverify: 5694414, 5629952, 5625504, 5629952
+
+xscalar_base: 2683371, 2683371, 2683371, 2683371
+xquad: 86720, 86720, 86720, 86720
+xcompress: 62165, 62165, 62165, 62165
+xdecompress: 62471, 62471, 62471, 62471
+
+/* stack */
+
+xkeypair: 500 stack bytes
+xsign: 580 stack bytes
+xverify: 808 stack bytes

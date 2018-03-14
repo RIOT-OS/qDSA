@@ -1,0 +1,908 @@
+.global fe1271_hdmrd
+.type fe1271_hdmrd, @function
+
+//*********************************************************
+// fe1271_hdmrd
+// performs Hadamard on array of 4 integers (modulo 2^127-1)
+// if r != a, it will leave a unchanged
+//
+// Inputs:
+//    r      in register R25:R24
+//    a      in register R23:R22
+//
+
+fe1271_hdmrd:
+
+  PUSH R6
+  PUSH R7
+  PUSH R8
+  PUSH R9
+  PUSH R10
+  PUSH R11
+  PUSH R12
+  PUSH R13
+  PUSH R14
+  PUSH R15
+  PUSH R16
+  PUSH R17
+
+  MOVW R6, R28              ; save Y register
+  MOVW R30, R22             ; load operand address a to Z
+  MOVW R28, R24             ; load operand address r to Y
+
+  ; a[0]+a[1]
+  LDD R10, Z+0
+  LDD R11, Z+16
+  ADD R10, R11
+
+  LDD R11, Z+1
+  LDD R12, Z+17
+  ADC R11, R12
+
+  LDD R12, Z+2
+  LDD R13, Z+18
+  ADC R12, R13
+
+  LDD R13, Z+3
+  LDD R14, Z+19
+  ADC R13, R14
+
+  LDD R14, Z+4
+  LDD R15, Z+20
+  ADC R14, R15
+
+  LDD R15, Z+5
+  LDD R16, Z+21
+  ADC R15, R16
+
+  LDD R16, Z+6
+  LDD R17, Z+22
+  ADC R16, R17
+
+  LDD R17, Z+7
+  LDD R18, Z+23
+  ADC R17, R18
+
+  LDD R18, Z+8
+  LDD R19, Z+24
+  ADC R18, R19
+
+  LDD R19, Z+9
+  LDD R20, Z+25
+  ADC R19, R20
+
+  LDD R20, Z+10
+  LDD R21, Z+26
+  ADC R20, R21
+
+  LDD R21, Z+11
+  LDD R22, Z+27
+  ADC R21, R22
+
+  LDD R22, Z+12
+  LDD R23, Z+28
+  ADC R22, R23
+
+  LDD R23, Z+13
+  LDD R24, Z+29
+  ADC R23, R24
+
+  LDD R24, Z+14
+  LDD R25, Z+30
+  ADC R24, R25
+
+  LDD R25, Z+15
+  LDD R9, Z+31
+  ADC R25, R9
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R25 ; put top bit into carry
+  ROL R8 ; multiply carry by 2
+  LSR R25
+
+  ADD R10, R8
+  ADC R11, R1
+  ADC R12, R1
+  ADC R13, R1
+  ADC R14, R1
+  ADC R15, R1
+  ADC R16, R1
+  ADC R17, R1
+  ADC R18, R1
+  ADC R19, R1
+  ADC R20, R1
+  ADC R21, R1
+  ADC R22, R1
+  ADC R23, R1
+  ADC R24, R1
+  ADC R25, R1
+
+  ; a[1]-a[0] 
+  ; store a[0]+a[1] in r[1]
+  ; store a[1]-a[0] in r[0]
+  LDD R9, Z+16
+  STD Y+16, R10
+  LDD R10, Z+0
+  SUB R9, R10
+
+  LDD R10, Z+17
+  STD Y+17, R11
+  LDD R11, Z+1
+  SBC R10, R11
+
+  LDD R11, Z+18
+  STD Y+18, R12
+  LDD R12, Z+2
+  SBC R11, R12
+
+  LDD R12, Z+19
+  STD Y+19, R13
+  LDD R13, Z+3
+  SBC R12, R13
+
+  LDD R13, Z+20
+  STD Y+20, R14
+  LDD R14, Z+4
+  SBC R13, R14
+
+  LDD R14, Z+21
+  STD Y+21, R15
+  LDD R15, Z+5
+  SBC R14, R15
+
+  LDD R15, Z+22
+  STD Y+22, R16
+  LDD R16, Z+6
+  SBC R15, R16
+
+  LDD R16, Z+23
+  STD Y+23, R17
+  LDD R17, Z+7
+  SBC R16, R17
+
+  LDD R17, Z+24
+  STD Y+24, R18
+  LDD R18, Z+8
+  SBC R17, R18
+
+  LDD R18, Z+25
+  STD Y+25, R19
+  LDD R19, Z+9
+  SBC R18, R19
+
+  LDD R19, Z+26
+  STD Y+26, R20
+  LDD R20, Z+10
+  SBC R19, R20
+
+  LDD R20, Z+27
+  STD Y+27, R21
+  LDD R21, Z+11
+  SBC R20, R21
+
+  LDD R21, Z+28
+  STD Y+28, R22
+  LDD R22, Z+12
+  SBC R21, R22
+
+  LDD R22, Z+29
+  STD Y+29, R23
+  LDD R23, Z+13
+  SBC R22, R23
+
+  LDD R23, Z+30
+  STD Y+30, R24
+  LDD R24, Z+14
+  SBC R23, R24
+
+  LDD R24, Z+31
+  STD Y+31, R25
+  LDD R25, Z+15
+  SBC R24, R25
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R8 ; multiply carry by 2
+
+  SUB R9, R8
+  SBC R10, R1
+  SBC R11, R1
+  SBC R12, R1
+  SBC R13, R1
+  SBC R14, R1
+  SBC R15, R1
+  SBC R16, R1
+  SBC R17, R1
+  SBC R18, R1
+  SBC R19, R1
+  SBC R20, R1
+  SBC R21, R1
+  SBC R22, R1
+  SBC R23, R1
+  SBC R24, R1
+
+  ; possibly an extra carry bit
+  CLR R8
+  ADC R8, R8
+  LSL R8
+  SUB R9, R8
+
+  STD Y+0, R9
+  STD Y+1, R10
+  STD Y+2, R11
+  STD Y+3, R12
+  STD Y+4, R13
+  STD Y+5, R14
+  STD Y+6, R15
+  STD Y+7, R16
+  STD Y+8, R17
+  STD Y+9, R18
+  STD Y+10, R19
+  STD Y+11, R20
+  STD Y+12, R21
+  STD Y+13, R22
+  STD Y+14, R23
+  STD Y+15, R24
+
+  ; repeat for a[2]+a[3] and a[2]-a[3]
+  ; store a[2]-a[3] in r[3]
+  ; put a[2]+a[3] on stack
+  LDD R10, Z+32
+  LDD R11, Z+48
+  ADD R10, R11
+
+  LDD R11, Z+33
+  LDD R12, Z+49
+  ADC R11, R12
+
+  LDD R12, Z+34
+  LDD R13, Z+50
+  ADC R12, R13
+
+  LDD R13, Z+35
+  LDD R14, Z+51
+  ADC R13, R14
+
+  LDD R14, Z+36
+  LDD R15, Z+52
+  ADC R14, R15
+
+  LDD R15, Z+37
+  LDD R16, Z+53
+  ADC R15, R16
+
+  LDD R16, Z+38
+  LDD R17, Z+54
+  ADC R16, R17
+
+  LDD R17, Z+39
+  LDD R18, Z+55
+  ADC R17, R18
+
+  LDD R18, Z+40
+  LDD R19, Z+56
+  ADC R18, R19
+
+  LDD R19, Z+41
+  LDD R20, Z+57
+  ADC R19, R20
+
+  LDD R20, Z+42
+  LDD R21, Z+58
+  ADC R20, R21
+
+  LDD R21, Z+43
+  LDD R22, Z+59
+  ADC R21, R22
+
+  LDD R22, Z+44
+  LDD R23, Z+60
+  ADC R22, R23
+
+  LDD R23, Z+45
+  LDD R24, Z+61
+  ADC R23, R24
+
+  LDD R24, Z+46
+  LDD R25, Z+62
+  ADC R24, R25
+
+  LDD R25, Z+47
+  LDD R9, Z+63
+  ADC R25, R9
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R25
+  ROL R8 ; multiply carry by 2
+  LSR R25
+  ADD R10, R8
+  ADC R11, R1
+  ADC R12, R1
+  ADC R13, R1
+  ADC R14, R1
+  ADC R15, R1
+  ADC R16, R1
+  ADC R17, R1
+  ADC R18, R1
+  ADC R19, R1
+  ADC R20, R1
+  ADC R21, R1
+  ADC R22, R1
+  ADC R23, R1
+  ADC R24, R1
+  ADC R25, R1
+
+  PUSH R25
+  PUSH R24
+  PUSH R23
+  PUSH R22
+  PUSH R21
+  PUSH R20
+  PUSH R19
+  PUSH R18
+  PUSH R17
+  PUSH R16
+  PUSH R15
+  PUSH R14
+  PUSH R13
+  PUSH R12
+  PUSH R11
+  PUSH R10
+
+  LDD R9, Z+32
+  LDD R10, Z+48
+  SUB R9, R10
+
+  LDD R10, Z+33
+  LDD R11, Z+49
+  SBC R10, R11
+
+  LDD R11, Z+34
+  LDD R12, Z+50
+  SBC R11, R12
+
+  LDD R12, Z+35
+  LDD R13, Z+51
+  SBC R12, R13
+
+  LDD R13, Z+36
+  LDD R14, Z+52
+  SBC R13, R14
+
+  LDD R14, Z+37
+  LDD R15, Z+53
+  SBC R14, R15
+
+  LDD R15, Z+38
+  LDD R16, Z+54
+  SBC R15, R16
+
+  LDD R16, Z+39
+  LDD R17, Z+55
+  SBC R16, R17
+
+  LDD R17, Z+40
+  LDD R18, Z+56
+  SBC R17, R18
+
+  LDD R18, Z+41
+  LDD R19, Z+57
+  SBC R18, R19
+
+  LDD R19, Z+42
+  LDD R20, Z+58
+  SBC R19, R20
+
+  LDD R20, Z+43
+  LDD R21, Z+59
+  SBC R20, R21
+
+  LDD R21, Z+44
+  LDD R22, Z+60
+  SBC R21, R22
+
+  LDD R22, Z+45
+  LDD R23, Z+61
+  SBC R22, R23
+
+  LDD R23, Z+46
+  LDD R24, Z+62
+  SBC R23, R24
+
+  LDD R24, Z+47
+  LDD R25, Z+63
+  SBC R24, R25
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R8 ; multiply carry by 2
+  SUB R9, R8
+  SBC R10, R1
+  SBC R11, R1
+  SBC R12, R1
+  SBC R13, R1
+  SBC R14, R1
+  SBC R15, R1
+  SBC R16, R1
+  SBC R17, R1
+  SBC R18, R1
+  SBC R19, R1
+  SBC R20, R1
+  SBC R21, R1
+  SBC R22, R1
+  SBC R23, R1
+  SBC R24, R1
+
+  ; possibly an extra carry bit
+  CLR R8
+  ADC R8, R8
+  LSL R8
+  SUB R9, R8
+
+  STD Y+48, R9
+  STD Y+49, R10
+  STD Y+50, R11
+  STD Y+51, R12
+  STD Y+52, R13
+  STD Y+53, R14
+  STD Y+54, R15
+  STD Y+55, R16
+  STD Y+56, R17
+  STD Y+57, R18
+  STD Y+58, R19
+  STD Y+59, R20
+  STD Y+60, R21
+  STD Y+61, R22
+  STD Y+62, R23
+  STD Y+63, R24
+
+  ; second half of 4 additions
+
+  ; c+d
+  ; c in Y+16, d in Y+48
+  ; store in r[3]
+  LDD R8, Y+16 
+  ADD R9, R8 ; d still stored in R9-R24
+
+  LDD R8, Y+17
+  ADC R10, R8
+
+  LDD R8, Y+18
+  ADC R11, R8
+
+  LDD R8, Y+19
+  ADC R12, R8
+
+  LDD R8, Y+20
+  ADC R13, R8
+
+  LDD R8, Y+21
+  ADC R14, R8
+
+  LDD R8, Y+22
+  ADC R15, R8
+
+  LDD R8, Y+23
+  ADC R16, R8
+
+  LDD R8, Y+24
+  ADC R17, R8
+
+  LDD R8, Y+25
+  ADC R18, R8
+
+  LDD R8, Y+26
+  ADC R19, R8
+
+  LDD R8, Y+27
+  ADC R20, R8
+
+  LDD R8, Y+28
+  ADC R21, R8
+
+  LDD R8, Y+29
+  ADC R22, R8
+
+  LDD R8, Y+30
+  ADC R23, R8
+
+  LDD R8, Y+31
+  ADC R24, R8
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R24 ; put top bit into carry
+  ROL R8 ; multiply carry by 2
+  LSR R24
+
+  ADD R9, R8
+  ADC R10, R1
+  ADC R11, R1
+  ADC R12, R1
+  ADC R13, R1
+  ADC R14, R1
+  ADC R15, R1
+  ADC R16, R1
+  ADC R17, R1
+  ADC R18, R1
+  ADC R19, R1
+  ADC R20, R1
+  ADC R21, R1
+  ADC R22, R1
+  ADC R23, R1
+  ADC R24, R1
+
+  ; d-c 
+  ; store in r[2]
+  LDD R8, Y+48
+  STD Y+48, R9
+  LDD R9, Y+16
+  SUB R8, R9
+
+  LDD R9, Y+49
+  STD Y+49, R10
+  LDD R10, Y+17
+  SBC R9, R10
+
+  LDD R10, Y+50
+  STD Y+50, R11
+  LDD R11, Y+18
+  SBC R10, R11
+
+  LDD R11, Y+51
+  STD Y+51, R12
+  LDD R12, Y+19
+  SBC R11, R12
+
+  LDD R12, Y+52
+  STD Y+52, R13
+  LDD R13, Y+20
+  SBC R12, R13
+
+  LDD R13, Y+53
+  STD Y+53, R14
+  LDD R14, Y+21
+  SBC R13, R14
+
+  LDD R14, Y+54
+  STD Y+54, R15
+  LDD R15, Y+22
+  SBC R14, R15
+
+  LDD R15, Y+55
+  STD Y+55, R16
+  LDD R16, Y+23
+  SBC R15, R16
+
+  LDD R16, Y+56
+  STD Y+56, R17
+  LDD R17, Y+24
+  SBC R16, R17
+
+  LDD R17, Y+57
+  STD Y+57, R18
+  LDD R18, Y+25
+  SBC R17, R18
+
+  LDD R18, Y+58
+  STD Y+58, R19
+  LDD R19, Y+26
+  SBC R18, R19
+
+  LDD R19, Y+59
+  STD Y+59, R20
+  LDD R20, Y+27
+  SBC R19, R20
+
+  LDD R20, Y+60
+  STD Y+60, R21
+  LDD R21, Y+28
+  SBC R20, R21
+
+  LDD R21, Y+61
+  STD Y+61, R22
+  LDD R22, Y+29
+  SBC R21, R22
+
+  LDD R22, Y+62
+  STD Y+62, R23
+  LDD R23, Y+30
+  SBC R22, R23
+
+  LDD R23, Y+63
+  STD Y+63, R24
+  LDD R24, Y+31
+  SBC R23, R24
+
+  CLR R24
+  ADC R24, R24 ; store carry
+  LSL R24 ; multiply carry by 2
+  SUB R8, R24
+  SBC R9, R1
+  SBC R10, R1
+  SBC R11, R1
+  SBC R12, R1
+  SBC R13, R1
+  SBC R14, R1
+  SBC R15, R1
+  SBC R16, R1
+  SBC R17, R1
+  SBC R18, R1
+  SBC R19, R1
+  SBC R20, R1
+  SBC R21, R1
+  SBC R22, R1
+  SBC R23, R1
+
+  ; possibly an extra carry bit
+  CLR R24
+  ADC R24, R24
+  LSL R24
+  SUB R8, R24
+
+  STD Y+32, R8
+  STD Y+33, R9
+  STD Y+34, R10
+  STD Y+35, R11
+  STD Y+36, R12
+  STD Y+37, R13
+  STD Y+38, R14
+  STD Y+39, R15
+  STD Y+40, R16
+  STD Y+41, R17
+  STD Y+42, R18
+  STD Y+43, R19
+  STD Y+44, R20
+  STD Y+45, R21
+  STD Y+46, R22
+  STD Y+47, R23
+
+  ; a+b 
+  ; a in Y+0, b on stack
+  ; store in r[0] 
+  LDD R10, Y+0
+  POP R11
+  STD Y+16, R11 ; need to use this value again
+  ADD R10, R11
+
+  LDD R11, Y+1
+  POP R12
+  STD Y+17, R12 
+  ADC R11, R12
+
+  LDD R12, Y+2
+  POP R13
+  STD Y+18, R13
+  ADC R12, R13
+
+  LDD R13, Y+3
+  POP R14
+  STD Y+19, R14
+  ADC R13, R14
+
+  LDD R14, Y+4
+  POP R15
+  STD Y+20, R15
+  ADC R14, R15
+
+  LDD R15, Y+5
+  POP R16
+  STD Y+21, R16
+  ADC R15, R16
+
+  LDD R16, Y+6
+  POP R17
+  STD Y+22, R17
+  ADC R16, R17
+
+  LDD R17, Y+7
+  POP R18
+  STD Y+23, R18
+  ADC R17, R18
+
+  LDD R18, Y+8
+  POP R19
+  STD Y+24, R19
+  ADC R18, R19
+
+  LDD R19, Y+9
+  POP R20
+  STD Y+25, R20
+  ADC R19, R20
+
+  LDD R20, Y+10
+  POP R21
+  STD Y+26, R21
+  ADC R20, R21
+
+  LDD R21, Y+11
+  POP R22
+  STD Y+27, R22
+  ADC R21, R22
+
+  LDD R22, Y+12
+  POP R23
+  STD Y+28, R23
+  ADC R22, R23
+
+  LDD R23, Y+13
+  POP R24
+  STD Y+29, R24
+  ADC R23, R24
+
+  LDD R24, Y+14
+  POP R25
+  STD Y+30, R25
+  ADC R24, R25
+
+  LDD R25, Y+15
+  POP R9
+  STD Y+31, R9
+  ADC R25, R9
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R25 ; put top bit into carry
+  ROL R8 ; multiply carry by 2
+  LSR R25
+
+  ADD R10, R8
+  ADC R11, R1
+  ADC R12, R1
+  ADC R13, R1
+  ADC R14, R1
+  ADC R15, R1
+  ADC R16, R1
+  ADC R17, R1
+  ADC R18, R1
+  ADC R19, R1
+  ADC R20, R1
+  ADC R21, R1
+  ADC R22, R1
+  ADC R23, R1
+  ADC R24, R1
+  ADC R25, R1
+ 
+  ; a-b 
+  ; store in r[1] 
+  LDD R9, Y+0
+  STD Y+0, R10
+  LDD R10, Y+16
+  SUB R9, R10
+
+  LDD R10, Y+1
+  STD Y+1, R11
+  LDD R11, Y+17
+  SBC R10, R11
+
+  LDD R11, Y+2
+  STD Y+2, R12
+  LDD R12, Y+18
+  SBC R11, R12
+
+  LDD R12, Y+3
+  STD Y+3, R13
+  LDD R13, Y+19
+  SBC R12, R13
+
+  LDD R13, Y+4
+  STD Y+4, R14
+  LDD R14, Y+20
+  SBC R13, R14
+
+  LDD R14, Y+5
+  STD Y+5, R15
+  LDD R15, Y+21
+  SBC R14, R15
+
+  LDD R15, Y+6
+  STD Y+6, R16
+  LDD R16, Y+22
+  SBC R15, R16
+
+  LDD R16, Y+7
+  STD Y+7, R17
+  LDD R17, Y+23
+  SBC R16, R17
+
+  LDD R17, Y+8
+  STD Y+8, R18
+  LDD R18, Y+24
+  SBC R17, R18
+
+  LDD R18, Y+9
+  STD Y+9, R19
+  LDD R19, Y+25
+  SBC R18, R19
+
+  LDD R19, Y+10
+  STD Y+10, R20
+  LDD R20, Y+26
+  SBC R19, R20
+
+  LDD R20, Y+11
+  STD Y+11, R21
+  LDD R21, Y+27
+  SBC R20, R21
+
+  LDD R21, Y+12
+  STD Y+12, R22
+  LDD R22, Y+28
+  SBC R21, R22
+
+  LDD R22, Y+13
+  STD Y+13, R23
+  LDD R23, Y+29
+  SBC R22, R23
+
+  LDD R23, Y+14
+  STD Y+14, R24
+  LDD R24, Y+30
+  SBC R23, R24
+
+  LDD R24, Y+15
+  STD Y+15, R25
+  LDD R25, Y+31
+  SBC R24, R25
+
+  CLR R8
+  ADC R8, R8 ; store carry
+  LSL R8 ; multiply carry by 2
+  SUB R9, R8
+  SBC R10, R1
+  SBC R11, R1
+  SBC R12, R1
+  SBC R13, R1
+  SBC R14, R1
+  SBC R15, R1
+  SBC R16, R1
+  SBC R17, R1
+  SBC R18, R1
+  SBC R19, R1
+  SBC R20, R1
+  SBC R21, R1
+  SBC R22, R1
+  SBC R23, R1
+  SBC R24, R1
+
+  ; possibly an extra carry bit
+  CLR R8
+  ADC R8, R8
+  LSL R8
+  SUB R9, R8
+
+  STD Y+16, R9
+  STD Y+17, R10
+  STD Y+18, R11
+  STD Y+19, R12
+  STD Y+20, R13
+  STD Y+21, R14
+  STD Y+22, R15
+  STD Y+23, R16
+  STD Y+24, R17
+  STD Y+25, R18
+  STD Y+26, R19
+  STD Y+27, R20
+  STD Y+28, R21
+  STD Y+29, R22
+  STD Y+30, R23
+  STD Y+31, R24
+
+  MOVW R28, R6 ; restore Y register
+
+  POP R17
+  POP R16
+  POP R15
+  POP R14
+  POP R13
+  POP R12
+  POP R11
+  POP R10
+  POP R9
+  POP R8
+  POP R7
+  POP R6
+
+  RET
