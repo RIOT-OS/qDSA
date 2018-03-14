@@ -1,3 +1,2 @@
-MODULE=qDSA
-DIRS += asm
+MODULE=qDSA_asm
 include $(RIOTBASE)/Makefile.base
