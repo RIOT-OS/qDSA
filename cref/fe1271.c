@@ -1,5 +1,4 @@
 #include "fe1271.h"
-#include "test/print.h"
 
 int fe1271_iszero(fe1271 *r)
 {
