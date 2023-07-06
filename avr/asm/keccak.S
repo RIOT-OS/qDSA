@@ -144,7 +144,11 @@ ch_XorLanesLoop:
 	push	rY+1
 	push	rInLen
 	push	rInLen+1
+#if (FLASHEND <= 0x1FFF)
+	rcall  KeccakF
+#else
 	call  KeccakF
+#endif
 	pop		rInLen+1
 	pop		rInLen
 	pop		rY+1
@@ -195,7 +199,11 @@ ch_Padding:
 	subi	rT1,					0x80
 	st		Z,						rT1
 
+#if (FLASHEND <= 0x1FFF)
+	rcall  KeccakF
+#else
 	call  KeccakF
+#endif
 
 	//output 
 	ldi		rT3,			 		crypto_hash_BYTES/4			; copy 4 bytes per iteration
